@@ -182,6 +182,9 @@ def parse_args():
     if arg.endswith('batchypegger'):
       continue
 
+    if arg.endswith('batchypegger.exe'):
+      continue
+
     arg_consumed = False
     for scheme in SCHEMES:
       if arg == scheme:

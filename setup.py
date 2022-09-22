@@ -5,7 +5,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
     requirements = fh.read()
 setup(
     name = 'batchypegger',
-    version = '0.5.0',
+    version = '0.5.1',
     author = 'Lucas',
     author_email = 'lucas@example.com',
     license = 'MIT',
