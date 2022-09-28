@@ -72,7 +72,7 @@ Examples
 Subtitles
 =========
 
-If there is an `.srt` file with the same exact filename as the video, only difference being the extension, then it will include the subtitles in the output.
+If there is an `.srt` or `.idx` or `.sub` file with the same exact filename as the video, only difference being the extension, then it will include the subtitles in the output.
 
 If you do a dry run, you can see if it picked up the subtitles or not.
 
