@@ -349,8 +349,9 @@ def dumpy(o):
   print('\\->:' + o['outfile'] + '\n')
 
 def look_for_subs(basename):
-  if os.path.isfile(basename + '.srt'):
-    return basename + '.srt'
+  for ext in ['.srt', '.idx', '.sub']:
+    if os.path.isfile(basename + ext):
+      return basename + ext
   return None
 
 def do_convert_all_vids():
