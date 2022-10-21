@@ -56,8 +56,22 @@ schemes:
     prefix:
     suffix:
 
+  x264dvdsub: 
+    codec_args: -map 0:v -map 0:a -map 1:s -c:v libx264 -crf 28 -c:a copy -c:s dvdsub
+    format: mkv
+    tag: x264
+    prefix:
+    suffix:
+
   x265: 
     codec_args: -c:v libx265 -crf 30 -c:s srt
+    format: mkv
+    tag: x265
+    prefix:
+    suffix:
+
+  x265dvdsub: 
+    codec_args: -map 0:v -map 0:a -map 1:s -c:v libx265 -crf 30 -c:s dvdsub
     format: mkv
     tag: x265
     prefix:
@@ -322,6 +336,11 @@ def get_codec_args(action):
 def get_subs(action):
   s = action['subs']
   return [ ] if s == None else [ '-i', s ]
+
+def get_dvdsubs(action):
+  s = action['dvdsubs']
+  return [ ] if s == None else [ '-i', s + '.idx', '-i', s + '.sub' ]
+
   
 def get_scaling(action):
   pness = action['pness']
@@ -349,10 +368,17 @@ def dumpy(o):
   print('\\->:' + o['outfile'] + '\n')
 
 def look_for_subs(basename):
-  for ext in ['.srt', '.idx', '.sub']:
+  for ext in ['.srt', '.vtt']:
     if os.path.isfile(basename + ext):
       return basename + ext
   return None
+
+def look_for_dvdsubs(basename):
+  i = 0
+  for ext in ['.idx', '.sub']:
+    if os.path.isfile(basename + ext):
+      i += 1
+  return basename if i == 2 else None
 
 def do_convert_all_vids():
   basename_suffixes = make_suffixes()
@@ -368,6 +394,7 @@ def convert_vids(src_vids):
   for src_vid in src_vids:
     basename, extension = os.path.splitext(src_vid)
     subs = look_for_subs(basename)
+    dvdsubs = look_for_dvdsubs(basename)
     clean_base = clean_filename(basename)
     for action in ACTIONS:
       o = dict() # yes, make a new one
@@ -376,6 +403,7 @@ def convert_vids(src_vids):
       o['scheme'] = action['scheme']
       o['pness'] = action['pness']
       o['subs'] = subs
+      o['dvdsubs'] = dvdsubs
       #print('Appending:')
       #dumpy(o)
       q.append(o)
@@ -399,13 +427,15 @@ def convert_vids(src_vids):
     scaling = get_scaling(o)
     taster = get_taster(o)
     subs_args = get_subs(o)
-
+    dvdsubs_args = get_dvdsubs(o)
+    
     OUTFILES.append(outfile)
 
 #   ffmpeg ffargs_prefix scheme_prefix -i infile codec_args scaling scheme_suffix ffargs_suffix outfile
 
     ffcmd = [ FFMPEG ] + FFARGS_PREFIX + scheme_prefix + [ '-i', infile ] + \
-      subs_args + codec_args + scaling + taster + scheme_suffix + FFARGS_SUFFIX + [ outfile ]
+      subs_args + dvdsubs_args + codec_args + scaling + taster + scheme_suffix + \
+      FFARGS_SUFFIX + [ outfile ]
 
     header(outfile + ' :: ' + folder_tag + ' :: ' + file_tag)
     print('ffcmd: ' + str(ffcmd))

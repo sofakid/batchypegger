@@ -72,7 +72,18 @@ Examples
 Subtitles
 =========
 
-If there is an `.srt` or `.idx` or `.sub` file with the same exact filename as the video, only difference being the extension, then it will include the subtitles in the output.
+If there is an `.srt` or `.vtt` file with the same exact filename as the video, only difference being the extension, then it will include the subtitles in the output.
+
+If you do a dry run, you can see if it picked up the subtitles or not.
+
+DVD Subtitles
+=============
+
+If there is an `.idx` and `.sub` file with the same exact filename as the video, only difference being the extension, then it will pick them up. 
+
+However, with DVD subtitles you need to use one of the `dvdsubs` profiles: `x264dvdsubs` or `x265dvdsubs`
+
+Or use your own custom profile that uses `-c:s dvdsubs` in the codec args and maps what you need, examine the config yaml for insight.
 
 If you do a dry run, you can see if it picked up the subtitles or not.
 
@@ -134,8 +145,22 @@ schemes:
     prefix:
     suffix:
 
+  x264dvdsub: 
+    codec_args: -map 0:v -map 0:a -map 1:s -c:v libx264 -crf 28 -c:a copy -c:s dvdsub
+    format: mkv
+    tag: x264
+    prefix:
+    suffix:
+
   x265: 
     codec_args: -c:v libx265 -crf 30 -c:s srt
+    format: mkv
+    tag: x265
+    prefix:
+    suffix:
+
+  x265dvdsub: 
+    codec_args: -map 0:v -map 0:a -map 1:s -c:v libx265 -crf 30 -c:s dvdsub
     format: mkv
     tag: x265
     prefix:
